@@ -14,7 +14,7 @@ export const HomePage = () => {
     "all" | "favorites" | "heroes" | "villains"
   >("all");
 
-  const { data } = useQuery({
+  const { data: heroesResponse } = useQuery({
     queryKey: ["heroes"],
     queryFn: () => getHeroesByPageAction(),
     staleTime: 1000 * 60 * 5, // 5 minutes
@@ -60,7 +60,7 @@ export const HomePage = () => {
 
           <TabsContent value="all">
             {/* All characters */}
-            <HeroGrid />
+            <HeroGrid heroes={heroesResponse?.heroes ?? []} />
           </TabsContent>
           <TabsContent value="favorites">
             {/* All favorite characters */}
