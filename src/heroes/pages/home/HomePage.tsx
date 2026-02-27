@@ -1,27 +1,15 @@
-import { useSearchParams } from "react-router";
-
+import { CustomBreadcrumbs } from "@/components/custom/CustomBreadcrumbs";
+import { CustomJumbotron } from "@/components/custom/CustomJumbotron";
+import { CustomPagination } from "@/components/custom/CustomPagination";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { HeroGrid } from "@/heroes/components/HeroGrid";
 import { HeroStats } from "@/heroes/components/HeroStats";
-import { CustomJumbotron } from "@/components/custom/CustomJumbotron";
-import { CustomPagination } from "@/components/custom/CustomPagination";
-import { CustomBreadcrumbs } from "@/components/custom/CustomBreadcrumbs";
-import { useMemo } from "react";
 import { useHeroSummary } from "@/heroes/hooks/useHeroSummary";
+import { useHomePage } from "@/heroes/hooks/useHomePage";
 import { usePaginatedHero } from "@/heroes/hooks/usePaginatedHero";
 
 export const HomePage = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  const activeTab = searchParams.get("tab") ?? "all";
-  const page = searchParams.get("page") ?? "1";
-  const limit = searchParams.get("limit") ?? "6";
-
-  const selectedTab = useMemo(() => {
-    const validTabs = ["all", "favorites", "heroes", "villains"];
-    return validTabs.includes(activeTab) ? activeTab : "all";
-  }, [activeTab]);
-
+  const { page, limit, selectedTab, setSearchParams } = useHomePage();
   const { data: heroesResponse } = usePaginatedHero(+page, +limit);
   const { data: summary } = useHeroSummary();
 
