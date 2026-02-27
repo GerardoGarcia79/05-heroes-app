@@ -9,7 +9,7 @@ import { CustomPagination } from "@/components/custom/CustomPagination";
 import { CustomBreadcrumbs } from "@/components/custom/CustomBreadcrumbs";
 import { getHeroesByPageAction } from "@/heroes/actions/get-heroes-by-page.action";
 import { useMemo } from "react";
-import { getSummaryAction } from "@/heroes/actions/get-summary.action";
+import { useHeroSummary } from "@/heroes/hooks/useHeroSummary";
 
 export const HomePage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -29,11 +29,7 @@ export const HomePage = () => {
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
 
-  const { data: summary } = useQuery({
-    queryKey: ["summary"],
-    queryFn: getSummaryAction,
-    staleTime: 1000 * 60 * 5, // 5 minutes
-  });
+  const { data: summary } = useHeroSummary();
 
   return (
     <>
