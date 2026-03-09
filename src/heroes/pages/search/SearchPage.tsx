@@ -10,7 +10,8 @@ import { HeroGrid } from "@/heroes/components/HeroGrid";
 const SearchPage = () => {
   const [searchParams] = useSearchParams();
   const name = searchParams.get("name") ?? "";
-  const { data: searchHeroesData } = useSearchHeroes({ name });
+  const strength = searchParams.get("strength") ?? "";
+  const { data: searchHeroesData } = useSearchHeroes({ name, strength });
 
   return (
     <>

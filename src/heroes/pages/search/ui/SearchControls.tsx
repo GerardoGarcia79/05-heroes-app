@@ -12,20 +12,50 @@ import {
 
 import { Search, Filter, SortAsc, Grid, Plus } from "lucide-react";
 
+const defaultSliderValue = 5;
 export const SearchControls = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [searchParams, setSearchParams] = useSearchParams();
+  const activeAccordion = searchParams.get("active-accordion") ?? "";
+  const strength = searchParams.get("strength") ?? "0";
+
+  const setQueryParams = (name: string, value: string) => {
+    setSearchParams((prev) => {
+      prev.set(name, value);
+      return prev;
+    });
+  };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      const query = inputRef.current?.value.trim() ?? "";
-      if (query) {
-        setSearchParams((prev) => {
-          prev.set("name", query);
-          return prev;
-        });
+      const value = inputRef.current?.value.trim() ?? "";
+      if (value) {
+        setQueryParams("name", value);
       }
     }
+  };
+
+  const handleFilterClick = () => {
+    const activeAccordion = searchParams.get("active-accordion");
+
+    setSearchParams((prev) => {
+      if (activeAccordion === "advanced-filters") {
+        prev.delete("active-accordion");
+        prev.delete("strength");
+      } else {
+        prev.set("active-accordion", "advanced-filters");
+        prev.set("strength", defaultSliderValue.toString());
+      }
+      return prev;
+    });
+  };
+
+  const handleSliderChange = (value: number[]) => {
+    const strengthValue = value[0];
+    setSearchParams((prev) => {
+      prev.set("strength", strengthValue.toString());
+      return prev;
+    });
   };
 
   return (
@@ -45,17 +75,23 @@ export const SearchControls = () => {
 
         {/* Action buttons */}
         <div className="flex gap-2">
-          <Button variant="outline" className="h-12 bg-transparent">
+          <Button
+            variant={
+              activeAccordion === "advanced-filters" ? "default" : "outline"
+            }
+            className="h-12"
+            onClick={handleFilterClick}
+          >
             <Filter className="h-4 w-4 mr-2" />
             Filters
           </Button>
 
-          <Button variant="outline" className="h-12 bg-transparent">
+          <Button variant="outline" className="h-12">
             <SortAsc className="h-4 w-4 mr-2" />
             Sort by Name
           </Button>
 
-          <Button variant="outline" className="h-12 bg-transparent">
+          <Button variant="outline" className="h-12">
             <Grid className="h-4 w-4" />
           </Button>
 
@@ -67,8 +103,8 @@ export const SearchControls = () => {
       </div>
 
       {/* Advanced Filters */}
-      <Accordion type="single" collapsible value="item-1">
-        <AccordionItem value="item-1">
+      <Accordion type="single" collapsible value={activeAccordion}>
+        <AccordionItem value="advanced-filters">
           {/* <AccordionTrigger>Advanced Filters</AccordionTrigger> */}
           <AccordionContent>
             <div className="bg-white rounded-lg p-6 mb-8 shadow-sm border">
@@ -104,9 +140,14 @@ export const SearchControls = () => {
               </div>
               <div className="mt-4">
                 <label className="text-sm font-medium">
-                  Minimum Strength: 0/10
+                  Minimum Strength: {strength}/10
                 </label>
-                <Slider defaultValue={[5]} max={10} step={1} />
+                <Slider
+                  defaultValue={[defaultSliderValue]}
+                  max={10}
+                  step={1}
+                  onValueChange={handleSliderChange}
+                />
               </div>
             </div>
           </AccordionContent>
